@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.text.Font?>
+
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.FXMLController">
+   <children>
+      <AnchorPane prefHeight="200.0" prefWidth="200.0">
+         <children>
+            <AnchorPane fx:id="s_loginForm" layoutX="300.0" prefHeight="400.0" prefWidth="300.0" styleClass="white-form" stylesheets="@application.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="300.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <children>
+                  <TextField fx:id="s_username" layoutX="47.0" layoutY="168.0" prefHeight="30.0" prefWidth="220.0" promptText="User name" styleClass="textfield" stylesheets="@application.css" />
+                  <PasswordField fx:id="s_password" layoutX="47.0" layoutY="213.0" prefHeight="30.0" prefWidth="220.0" promptText="Password" styleClass="textfield" stylesheets="@application.css" />
+                  <Button fx:id="s_loginBtn" layoutX="46.0" layoutY="268.0" mnemonicParsing="false" onAction="#loginBtn" prefHeight="30.0" prefWidth="220.0" styleClass="login-btn" stylesheets="@application.css" text="Login" />
+                  <Label layoutX="75.0" layoutY="102.0" styleClass="head-lable" stylesheets="@application.css" text="Login Account" textFill="#1d98c9">
+                     <font>
+                        <Font size="22.0" />
+                     </font>
+                  </Label>
+                  <Hyperlink fx:id="s_forgotPass" layoutX="47.0" layoutY="243.0" onAction="#switchForgotPass" text="Forgot Password?" textFill="#19aed3" />
+               </children>
+            </AnchorPane>
+            <AnchorPane fx:id="su_siignupForm" prefHeight="400.0" prefWidth="300.0" styleClass="white-form" stylesheets="@application.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <children>
+                  <TextField fx:id="su_username" layoutX="47.0" layoutY="121.0" onAction="#regBtn" prefHeight="30.0" prefWidth="220.0" promptText="User name" styleClass="textfield" stylesheets="@application.css" />
+                  <PasswordField fx:id="su_password" layoutX="47.0" layoutY="164.0" onAction="#regBtn" prefHeight="30.0" prefWidth="220.0" promptText="Password" styleClass="textfield" stylesheets="@application.css" />
+                  <Button fx:id="su_signupBtn" layoutX="40.0" layoutY="330.0" mnemonicParsing="false" onAction="#regBtn" prefHeight="30.0" prefWidth="220.0" styleClass="login-btn" stylesheets="@application.css" text="Sign Up" />
+                  <Label layoutX="63.0" layoutY="54.0" styleClass="head-lable" stylesheets="@application.css" text="Register Account" textFill="#1d98c9">
+                     <font>
+                        <Font size="20.0" />
+                     </font>
+                  </Label>
+                  <ComboBox fx:id="su_question" layoutX="47.0" layoutY="209.0" prefHeight="30.0" prefWidth="220.0" promptText="Question" styleClass="textfield" stylesheets="@application.css" />
+                  <TextField fx:id="su_answer" layoutX="47.0" layoutY="257.0" onAction="#regBtn" prefHeight="30.0" prefWidth="220.0" promptText="Answer" styleClass="textfield" stylesheets="@application.css" />
+               </children>
+            </AnchorPane>
+            <AnchorPane fx:id="fp_questionForm" layoutX="300.0" layoutY="5.0" prefHeight="400.0" prefWidth="300.0" styleClass="white-form" stylesheets="@application.css" visible="false">
+               <children>
+                  <Button fx:id="fp_proceedBtn" layoutX="40.0" layoutY="243.0" mnemonicParsing="false" onAction="#proceedBtn" prefHeight="30.0" prefWidth="220.0" styleClass="login-btn" stylesheets="@application.css" text="Proceed" />
+                  <Label layoutX="57.0" layoutY="58.0" styleClass="head-lable" stylesheets="@application.css" text="Forgot Password" textFill="#1d98c9">
+                     <font>
+                        <Font size="20.0" />
+                     </font>
+                  </Label>
+                  <ComboBox fx:id="fp_question" layoutX="40.0" layoutY="156.0" prefHeight="32.0" prefWidth="220.0" promptText="Question?" styleClass="textfield" stylesheets="@application.css" />
+                  <TextField fx:id="fp_answer" layoutX="40.0" layoutY="200.0" prefHeight="32.0" prefWidth="220.0" promptText="Answer" styleClass="textfield" stylesheets="@application.css" />
+                  <Button fx:id="fp_back" layoutX="124.0" layoutY="341.0" mnemonicParsing="false" onAction="#backToLoginForm" prefHeight="30.0" prefWidth="63.0" styleClass="login-btn" stylesheets="@application.css" text="&lt;Back" />
+                  <TextField fx:id="fp_username" layoutX="40.0" layoutY="109.0" prefHeight="32.0" prefWidth="220.0" promptText="username" styleClass="textfield" stylesheets="@application.css" />
+               </children>
+            </AnchorPane>
+            <AnchorPane fx:id="np_newPassForm" layoutX="300.0" layoutY="5.0" prefHeight="400.0" prefWidth="300.0" styleClass="white-form" stylesheets="@application.css" visible="false">
+               <children>
+                  <Button fx:id="np_changePassBtn" layoutX="41.0" layoutY="234.0" mnemonicParsing="false" onAction="#changePassBtn" prefHeight="30.0" prefWidth="220.0" styleClass="login-btn" stylesheets="@application.css" text="Change Password" />
+                  <Label layoutX="51.0" layoutY="71.0" styleClass="head-lable" stylesheets="@application.css" text="Change Password" textFill="#1d98c9">
+                     <font>
+                        <Font size="20.0" />
+                     </font>
+                  </Label>
+                  <Button fx:id="np_back" layoutX="120.0" layoutY="349.0" mnemonicParsing="false" onAction="#backToQuestionForm" prefHeight="30.0" prefWidth="63.0" styleClass="login-btn" stylesheets="@application.css" text="&lt;Back" />
+                  <PasswordField fx:id="np_newPassword" layoutX="41.0" layoutY="137.0" prefHeight="30.0" prefWidth="220.0" promptText="New Password" />
+                  <PasswordField fx:id="np_comfirmPassword" layoutX="41.0" layoutY="181.0" prefHeight="30.0" prefWidth="220.0" promptText="Comfirmation Password" />
+               </children>
+            </AnchorPane>
+            <AnchorPane fx:id="side_form" prefHeight="400.0" prefWidth="300.0" styleClass="left-form" stylesheets="@application.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <children>
+                  <Label layoutX="76.0" layoutY="307.0" text="Create Account" textFill="WHITE">
+                     <font>
+                        <Font size="22.0" />
+                     </font>
+                  </Label>
+                  <Button fx:id="side_createBtn" layoutX="40.0" layoutY="347.0" mnemonicParsing="false" onAction="#switchForm" prefHeight="30.0" prefWidth="220.0" styleClass="create-btn" stylesheets="@application.css" text="Create new Account" />
+                  <Circle fill="WHITE" layoutX="150.0" layoutY="125.0" radius="75.0" stroke="BLACK" strokeType="INSIDE" />
+                  <Label layoutX="14.0" layoutY="208.0" text="Coffee Store Management System" textFill="WHITE">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Label>
+                  <Button fx:id="side_alreadyHave" layoutX="50.0" layoutY="357.0" mnemonicParsing="false" onAction="#switchForm" prefHeight="30.0" prefWidth="220.0" styleClass="create-btn" stylesheets="@application.css" text="Already hava an Account" visible="false" />
+               </children>
+            </AnchorPane>
+         </children>
+      </AnchorPane>
+   </children>
+</StackPane>
