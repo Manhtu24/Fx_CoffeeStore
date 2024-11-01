@@ -1,5 +1,6 @@
 package application;
 
+import java.io.IOException;
 //import java.awt.Button;
 //import java.awt.TextField;
 //import java.awt.event.ActionEvent;
@@ -23,7 +24,10 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
@@ -32,6 +36,7 @@ import javafx.scene.control.Hyperlink;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 
 public class FXMLController implements Initializable {
@@ -117,7 +122,7 @@ public class FXMLController implements Initializable {
     private PreparedStatement preparedStatement;
     private ResultSet resultSet;
     
-    public void loginBtn() {
+    public void loginBtn() throws IOException {
     	if(s_username.getText().isEmpty()||s_password.getText().isEmpty() ) {
     		alert= new Alert(AlertType.ERROR);
     		alert.setTitle("Error Message");
@@ -137,11 +142,26 @@ public class FXMLController implements Initializable {
 				resultSet= preparedStatement.executeQuery();
 				//check login account
 				if(resultSet.next()) {
+					
+					//Get user name
+					data.username=s_username.getText();
 		    		alert= new Alert(AlertType.INFORMATION);
 		    		alert.setTitle("Information Message");
 		    		alert.setHeaderText(null);
 		    		alert.setContentText("Successfully Login ");
 		    		alert.showAndWait();
+		    		
+		    		//IF add successfully, new stage will appear
+		    		Parent root= FXMLLoader.load(getClass().getResource("mainForm.fxml"));
+		    		Stage stage= new Stage();
+		    		Scene scene= new Scene(root);
+		    		stage.setTitle("Coffee Store Management System");
+		    		stage.setMinWidth(1100);
+		    		stage.setMinHeight(600);
+		    		stage.setScene(scene);
+		    		stage.show();
+		    		
+		    		s_loginBtn.getScene().getWindow().hide();
 				}else {
 		    		alert= new Alert(AlertType.ERROR);
 		    		alert.setTitle("Error Message");
