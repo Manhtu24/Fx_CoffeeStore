@@ -1,5 +1,6 @@
 package application;
 
+import java.io.File;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -24,13 +25,18 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
+import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 
 
@@ -55,25 +61,25 @@ public class mainFormController implements Initializable {
     private Button inventory_clearBtn;
 
     @FXML
-    private TableColumn<?, ?> inventory_col_date;
+    private TableColumn<productData, String> inventory_col_date;
 
     @FXML
-    private TableColumn<?, ?> inventory_col_price;
+    private TableColumn<productData, String> inventory_col_price;
 
     @FXML
-    private TableColumn<?, ?> inventory_col_productID;
+    private TableColumn<productData, String> inventory_col_productID;
 
     @FXML
-    private TableColumn<?, ?> inventory_col_productName;
+    private TableColumn<productData, String> inventory_col_productName;
 
     @FXML
-    private TableColumn<?, ?> inventory_col_status;
+    private TableColumn<productData, String> inventory_col_status;
 
     @FXML
-    private TableColumn<?, ?> inventory_col_stock;
+    private TableColumn<productData, String> inventory_col_stock;
 
     @FXML
-    private TableColumn<?, ?> inventory_col_type;
+    private TableColumn<productData, String> inventory_col_type;
 
     @FXML
     private Button inventory_deleteBtn;
@@ -122,6 +128,45 @@ public class mainFormController implements Initializable {
     
     @FXML
     private ComboBox<?> inventory_type;
+    
+    @FXML
+    private TextField menu_amount;
+
+    @FXML
+    private Label menu_change;
+
+    @FXML
+    private TableColumn<?, ?> menu_col_price;
+
+    @FXML
+    private TableColumn<?, ?> menu_col_productName;
+
+    @FXML
+    private TableColumn<?, ?> menu_col_quantity;
+
+    @FXML
+    private AnchorPane menu_form;
+
+    @FXML
+    private GridPane menu_gridPane;
+
+    @FXML
+    private Button menu_payBtn;
+
+    @FXML
+    private Button menu_receiptBtn;
+
+    @FXML
+    private Button menu_removeBtn;
+
+    @FXML
+    private ScrollPane menu_scrollPane;
+
+    @FXML
+    private TableView<?> menu_tableView;
+
+    @FXML
+    private Label menu_total;
 	
     private Alert alert;
     
@@ -129,11 +174,219 @@ public class mainFormController implements Initializable {
     
     private String [] statusList= {"Available","Unavailable"};
     
+    private Image image;
+    
     private Connection connection;
     private PreparedStatement preparedStatement;
     private Statement statement;
     private ResultSet resultSet;
     
+    
+    public ObservableList<productData> cardListData;
+    
+    public void inventoryAddBtn() {
+    	if(inventory_productID.getText().isEmpty()||
+    			inventory_productName.getText().isEmpty()||
+    			inventory_stock.getText().isEmpty()||
+    			inventory_price.getText().isEmpty()||
+    			inventory_type.getSelectionModel().getSelectedItem()==null||
+    			inventory_status.getSelectionModel().getSelectedItem()==null||
+    			data.path==null) {
+    		
+    		alert= new Alert(AlertType.ERROR);
+    		alert.setTitle("Error Message");
+    		alert.setHeaderText(null);
+    		alert.setContentText("Please fill all blank fields");
+    		alert.showAndWait();
+    		
+    	}else {
+    		String checkProdID= "SELECT prod_id FROM product WHERE prod_id= '"
+    				+inventory_productID.getText()+"'" ;
+    		
+    		connection= database.connectDB();
+    		
+    		try {
+				statement= connection.createStatement();
+				resultSet= statement.executeQuery(checkProdID);
+				
+				if(resultSet.next()) {
+		    		alert= new Alert(AlertType.ERROR);
+		    		alert.setTitle("Error Message");
+		    		alert.setHeaderText(null);
+		    		alert.setContentText(inventory_productID.getText()+" is already taken");
+		    		alert.showAndWait();
+				}else {
+					String insertData= "INSERT INTO product "
+							+"(prod_id, prod_name,type, stock, price, status, image, date)"
+							+"VALUES(?,?,?,?,?,?,?,?)";
+					
+					preparedStatement= connection.prepareStatement(insertData);
+					preparedStatement.setString(1,inventory_productID.getText() );
+					preparedStatement.setString(2, inventory_productName.getText());
+					preparedStatement.setString(3, (String)inventory_type.getSelectionModel().getSelectedItem());
+					preparedStatement.setString(4, inventory_stock.getText());
+					preparedStatement.setString(5, inventory_price.getText());
+					preparedStatement.setString(6,(String)inventory_status.getSelectionModel().getSelectedItem() );
+					
+					String path= data.path;
+					path= path.replace("\\", "\\\\");
+					preparedStatement.setString(7, path);
+					//for get current data
+					Date date= new Date();
+					java.sql.Date sqlDate= new java.sql.Date(date.getTime());
+					preparedStatement.setString(8, String.valueOf(sqlDate));
+					preparedStatement.executeUpdate();
+					
+		    		alert= new Alert(AlertType.INFORMATION);
+		    		alert.setTitle("Error Message");
+		    		alert.setHeaderText(null);
+		    		alert.setContentText("Successfully Added");
+		    		alert.showAndWait();
+		    		
+					inventoryShowData();
+					inventoryClearBtn();
+					
+				}
+				
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    		
+    	}
+    }
+    
+    public void inventoryUpdateBtn() {
+    	if(inventory_productID.getText().isEmpty()||
+    			inventory_productName.getText().isEmpty()||
+    			inventory_stock.getText().isEmpty()||
+    			inventory_price.getText().isEmpty()||
+    			inventory_type.getSelectionModel().getSelectedItem()==null||
+    			inventory_status.getSelectionModel().getSelectedItem()==null||
+    			data.path==null||data.id==0) {
+    		
+    		alert= new Alert(AlertType.ERROR);
+    		alert.setTitle("Error Message");
+    		alert.setHeaderText(null);
+    		alert.setContentText("Please fill all blank fields");
+    		alert.showAndWait();
+    		
+    	}else {
+    		String path=data.path;
+    		path=path.replace("\\", "\\\\");
+    		String updateData= "UPDATE product SET "
+    				+"prod_id = '"+inventory_productID.getText() + "', prod_name = '" +
+    				inventory_productName.getText() + "', type = '" +
+    				inventory_type.getSelectionModel().getSelectedItem() + "' , stock = '"+
+    				inventory_stock.getText() + "' , price = '"+ 
+    				inventory_price.getText()+"', status= '"+
+    				inventory_status.getSelectionModel().getSelectedItem()+"', image='"
+    				+path +"', date= '"+ data.date +"' WHERE id= "+data.id;
+    		connection=database.connectDB();
+    		
+    		try {
+        		alert= new Alert(AlertType.CONFIRMATION);
+        		alert.setTitle("Error Message");
+        		alert.setHeaderText(null);
+        		alert.setContentText("Are you sure you want to UPDATE Product ID : "+inventory_productID.getText()+" ?");
+        		Optional<ButtonType> optional=alert.showAndWait();
+        		
+        		if (optional.get().equals(ButtonType.OK)) {
+    				preparedStatement=connection.prepareStatement(updateData);
+    				preparedStatement.executeUpdate();
+    	    		alert= new Alert(AlertType.INFORMATION);
+    	    		alert.setTitle("Error Message");
+    	    		alert.setHeaderText(null);
+    	    		alert.setContentText("Successfully Updated");
+    	    		alert.showAndWait();
+    				
+    				inventoryShowData(); //update data in table view
+    				inventoryClearBtn();
+				}else {
+	   	    		alert= new Alert(AlertType.ERROR);
+    	    		alert.setTitle("Error Message");
+    	    		alert.setHeaderText(null);
+    	    		alert.setContentText("Cancelled");
+    	    		alert.showAndWait();
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+    	}
+    }
+    
+    public void inventoryDeleteBtn() {
+    	if(data.id==0) {
+    		alert= new Alert(AlertType.ERROR);
+    		alert.setTitle("Error Message");
+    		alert.setHeaderText(null);
+    		alert.setContentText("Please fill all blank fields");
+    		alert.showAndWait();
+    		
+    	}else {
+	    	alert= new Alert(AlertType.CONFIRMATION);
+    		alert.setTitle("Error Message");
+    		alert.setHeaderText(null);
+    		alert.setContentText("Are you sure you want to DELETE Product ID: "+inventory_productID.getText()+" ?");
+    		Optional<ButtonType> optional=alert.showAndWait();
+    		if(optional.get().equals(ButtonType.OK)) {
+    			String deleteData="DELETE FROM product WHERE id= "+data.id;
+    			try {
+					preparedStatement=connection.prepareStatement(deleteData);
+					preparedStatement.executeUpdate();
+					
+		    		alert= new Alert(AlertType.INFORMATION);
+		    		alert.setTitle("Error Message");
+		    		alert.setHeaderText(null);
+		    		alert.setContentText("Successfully Deleted");
+		    		alert.showAndWait();
+		    		
+    				inventoryShowData(); //update data in table view
+    				inventoryClearBtn();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+    		}else {
+	    		alert= new Alert(AlertType.ERROR);
+	    		alert.setTitle("Error Message");
+	    		alert.setHeaderText(null);
+	    		alert.setContentText("Cancelled");
+	    		alert.showAndWait();
+    		}
+    		
+    		
+    		
+    	}
+    }
+    
+    public void inventoryClearBtn() {
+    	inventory_productID.setText("");
+    	inventory_productName.setText("");
+    	inventory_type.getSelectionModel().clearSelection();
+    	inventory_stock.setText("");
+    	inventory_price.setText("");
+    	inventory_status.getSelectionModel().clearSelection();
+    	data.path="";
+    	data.id=0;
+    	inventory_imageView.setImage(null);
+    }
+    
+    public void inventoryImportBtn() {
+    	FileChooser openfile= new FileChooser();
+    	openfile.getExtensionFilters().add(new ExtensionFilter("Open image File","*png","*jpg"));
+    	File file= openfile.showOpenDialog(main_form.getScene().getWindow());
+    	
+    	if(file!=null) {
+    		data.path=file.getAbsolutePath();
+    		image= new Image(file.toURI().toString(), 157, 139, false, true);
+    		
+    		inventory_imageView.setImage(image);
+    		
+    		//not done
+    		
+    }
+ }    	
     
     public ObservableList<productData> inventoryDataList(){
     	ObservableList<productData> listData=FXCollections.observableArrayList();
@@ -160,6 +413,8 @@ public class mainFormController implements Initializable {
     }
     
     private ObservableList<productData> inventoryListData;
+    
+    //to show data in table at inventory
     public void inventoryShowData() {
     	inventoryListData=inventoryDataList();
     	inventory_col_productID.setCellValueFactory(new PropertyValueFactory<>("productId"));
@@ -171,6 +426,26 @@ public class mainFormController implements Initializable {
     	inventory_col_date.setCellValueFactory(new PropertyValueFactory<>("date"));
     	
     	inventory_tableView.setItems(inventoryListData);
+    }
+    
+    public void inventorySelecData() {
+    	productData prodData= inventory_tableView.getSelectionModel().getSelectedItem();
+    	int number=inventory_tableView.getSelectionModel().getSelectedIndex();
+    	if((number-1)<-1) {
+    		return;
+    	}
+    	inventory_productID.setText(prodData.getProductId());
+    	inventory_productName.setText(prodData.getProductName());
+    	inventory_stock.setText(String.valueOf(prodData.getStock()));
+    	inventory_price.setText(String.valueOf(prodData.getPrice()));
+    	data.path=prodData.getImage();
+    	String path= "File:"+prodData.getImage();
+    	
+    	data.date= String.valueOf(prodData.getDate());
+    	data.id= prodData.getId();
+    	image= new Image(path, 157,139, false, true);
+    	inventory_imageView.setImage(image);
+    	
     }
     
     public void inventoryTypeList() {

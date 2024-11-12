@@ -25,6 +25,14 @@ public class productData {
 		this.date = date;
 		this.image = imageString;
 	}
+	
+	public productData(Integer id, String productId, String productName, Double price, String image) {
+		this.id = id;
+		this.productId = productId;
+		this.productName = productName;
+		this.price = price;
+		this.image = image;
+	}
 
 	public Integer getId() {
 		return id;
@@ -93,8 +101,5 @@ public class productData {
 	public void setImage(String image) {
 		this.image = image;
 	}
-	
-	
-	
-	
+
 }

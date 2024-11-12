@@ -17,7 +17,7 @@ public class database {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return null; //Just want to test and then ...
+		return null; //if connection fail
 	}
 	
 }
